@@ -35,7 +35,8 @@ class EditMessageMedia:
         message_id: int,
         media: "types.InputMedia",
         reply_markup: "types.InlineKeyboardMarkup" = None,
-        file_name: str = None
+        file_name: str = None,
+        business_connection_id: str = None
     ) -> "types.Message":
         """Edit animation, audio, document, photo or video messages.
 
@@ -62,6 +63,9 @@ class EditMessageMedia:
             file_name (``str``, *optional*):
                 File name of the media to be sent. Not applicable to photos.
                 Defaults to file's path basename.
+
+            business_connection_id (``str``, *optional*):
+                Unique identifier of the business connection.
 
         Returns:
             :obj:`~pyrogram.types.Message`: On success, the edited message is returned.
@@ -100,7 +104,8 @@ class EditMessageMedia:
                             file=await self.save_file(media.media),
                             spoiler=media.has_spoiler
                         )
-                    )
+                    ),
+            business_connection_id=business_connection_id
                 )
 
                 media = raw.types.InputMediaPhoto(
@@ -131,7 +136,8 @@ class EditMessageMedia:
                                 media=raw.types.InputMediaUploadedPhoto(
                                     file=await self.save_file(media.video_cover)
                                 )
-                            )
+                            ),
+            business_connection_id=business_connection_id
                         )
                     elif re.match("^https?://", media.video_cover):
                         vcover_media = await self.invoke(
@@ -140,7 +146,8 @@ class EditMessageMedia:
                                 media=raw.types.InputMediaPhotoExternal(
                                     url=media.video_cover
                                 )
-                            )
+                            ),
+            business_connection_id=business_connection_id
                         )
                     else:
                         vcover_file = utils.get_input_media_from_file_id(media.video_cover, FileType.PHOTO).id
@@ -151,7 +158,8 @@ class EditMessageMedia:
                             media=raw.types.InputMediaUploadedPhoto(
                                 file=await self.save_file(media.video_cover)
                             )
-                        )
+                        ),
+            business_connection_id=business_connection_id
                     )
 
                 if vcover_media:
@@ -184,7 +192,8 @@ class EditMessageMedia:
                                 )
                             ]
                         )
-                    )
+                    ),
+            business_connection_id=business_connection_id
                 )
 
                 media = raw.types.InputMediaDocument(
@@ -230,7 +239,8 @@ class EditMessageMedia:
                                 )
                             ]
                         )
-                    )
+                    ),
+            business_connection_id=business_connection_id
                 )
 
                 media = raw.types.InputMediaDocument(
@@ -269,7 +279,8 @@ class EditMessageMedia:
                                 raw.types.DocumentAttributeAnimated()
                             ]
                         )
-                    )
+                    ),
+            business_connection_id=business_connection_id
                 )
 
                 media = raw.types.InputMediaDocument(
@@ -302,7 +313,8 @@ class EditMessageMedia:
                                 )
                             ]
                         )
-                    )
+                    ),
+            business_connection_id=business_connection_id
                 )
 
                 media = raw.types.InputMediaDocument(
@@ -327,7 +339,8 @@ class EditMessageMedia:
                 reply_markup=await reply_markup.write(self) if reply_markup else None,
                 message=message,
                 entities=entities
-            )
+            ),
+            business_connection_id=business_connection_id
         )
 
         for i in r.updates:
