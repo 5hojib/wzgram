@@ -159,8 +159,8 @@ class DownloadMedia:
             if not file_name or file_name in (".", ".."):
                 file_name = ""
 
-        if not os.path.isabs(file_name):
-            directory = self.PARENT_DIR / (directory or DEFAULT_DOWNLOAD_DIR)
+        if not os.path.isabs(directory):
+            directory = self.workdir / (directory or DEFAULT_DOWNLOAD_DIR)
 
         if not file_name:
             guessed_extension = self.guess_extension(mime_type)
