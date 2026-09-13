@@ -44,6 +44,7 @@ MAX_RETRIES = 16
 STALL_TIMEOUT = 900
 READ_BUFFER = 4 * 1024 * 1024
 MAX_BATCH = 4 * 1024 * 1024
+PACER_BURST = 4
 
 
 async def _stop_workers(queue: asyncio.Queue, workers: list) -> list:
@@ -241,7 +242,7 @@ class SaveFile:
                 raise
 
             next_batch_task = None
-            _pacer = TokenBucket(rate=rate_limit, burst=max(n_workers, rate_limit / 10))
+            _pacer = TokenBucket(rate=rate_limit, burst=PACER_BURST)
             _stalled_since = 0.0
 
             async def _report(parts: int) -> None:
