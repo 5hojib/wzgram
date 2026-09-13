@@ -1698,6 +1698,35 @@ class Client(Methods):
                     _cdn_rate = TokenBucket(rate=dl_rate, burst=dl_burst)
                     _report_tasks = set()
                     _stop_requested = False
+                    _cdn_hashes = {h.offset: h for h in r.file_hashes}
+
+                    async def _hashes_covering(start: int, length: int) -> list:
+                        covering = []
+                        at = start
+
+                        while at < start + length:
+                            h = _cdn_hashes.pop(at, None)
+
+                            if h is None:
+                                for fetched in await session.invoke(
+                                    raw.functions.upload.GetCdnFileHashes(
+                                        file_token=r.file_token,
+                                        offset=at
+                                    )
+                                ):
+                                    _cdn_hashes[fetched.offset] = fetched
+
+                                h = _cdn_hashes.pop(at, None)
+
+                                CDNFileHashMismatch.check(
+                                    h is not None,
+                                    f"the CDN returned no hash covering offset {at}"
+                                )
+
+                            covering.append(h)
+                            at = h.offset + h.limit
+
+                        return covering
 
                     try:
                         while True:
@@ -1735,17 +1764,15 @@ class Client(Methods):
                                 bytearray(r.encryption_iv[:-4] + (offset_bytes // 16).to_bytes(4, "big"))
                             )
 
-                            hashes = await session.invoke(
-                                raw.functions.upload.GetCdnFileHashes(
-                                    file_token=r.file_token,
-                                    offset=offset_bytes
-                                )
+                            hashes = await _hashes_covering(
+                                offset_bytes, len(decrypted_chunk)
                             )
 
                             # https://core.telegram.org/cdn#verifying-files
                             def _check_all_hashes():
-                                for i, h in enumerate(hashes):
-                                    cdn_chunk = decrypted_chunk[h.limit * i: h.limit * (i + 1)]
+                                for h in hashes:
+                                    at = h.offset - offset_bytes
+                                    cdn_chunk = decrypted_chunk[at: at + h.limit]
                                     CDNFileHashMismatch.check(
                                         h.hash == sha256(cdn_chunk).digest(),
                                         "h.hash == sha256(cdn_chunk).digest()"
