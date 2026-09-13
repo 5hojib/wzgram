@@ -17,6 +17,7 @@
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
 import asyncio
+import contextlib
 import functools
 import inspect
 import io
@@ -214,17 +215,30 @@ class SaveFile:
             md5_sum = md5() if not is_big and not is_missing_part else None
 
             dc_id = await self.storage.dc_id()
-            pool = await self._get_media_session_pool(dc_id, pool_size)
+            pool_lease = contextlib.AsyncExitStack()
 
-            _acked = [0]
+            try:
+                pool_task = await pool_lease.enter_async_context(
+                    self._media_pool(dc_id, pool_size)
+                )
+                pool = await pool_task
 
-            n_workers = len(pool) * 2
-            queue = asyncio.Queue(n_workers)
-            budget = ReadAhead(self.read_ahead_slots)
-            workers = [
-                self.loop.create_task(worker(pool[i % len(pool)]))
-                for i in range(n_workers)
-            ]
+                if not pool:
+                    raise OSError(f"No media session available for DC {dc_id}")
+
+                _acked = [0]
+
+                n_workers = len(pool) * 2
+                queue = asyncio.Queue(n_workers)
+                budget = ReadAhead(self.read_ahead_slots)
+                workers = [
+                    self.loop.create_task(worker(pool[i % len(pool)]))
+                    for i in range(n_workers)
+                ]
+            except BaseException:
+                await pool_lease.aclose()
+                raise
+
             next_batch_task = None
             _next_dispatch = 0.0
             _dispatch_interval = 1.0 / rate_limit
@@ -373,6 +387,7 @@ class SaveFile:
 
                 await _stop_workers(queue, workers)
                 budget.release_all()
+                await pool_lease.aclose()
 
                 if isinstance(path, (str, PurePath)):
                     fp.close()

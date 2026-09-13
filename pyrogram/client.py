@@ -17,6 +17,7 @@
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
 import asyncio
+import contextlib
 import functools
 import inspect
 import logging
@@ -413,6 +414,7 @@ class Client(Methods):
     MAX_READ_AHEAD_CHUNKS = int(os.environ.get("WZGRAM_MAX_READ_AHEAD", 64))
 
     DOWNLOAD_POOL_SIZE = 4  # fallback default
+    MEDIA_POOL_CAP = 16
     MAX_CONCURRENT_TRANSMISSIONS = 16
     MAX_MESSAGE_CACHE_SIZE = 1000
     MAX_TOPIC_CACHE_SIZE = 1000
@@ -565,6 +567,7 @@ class Client(Methods):
         self.sessions = {}
         self.media_sessions = {}
         self.media_session_pools = {}
+        self._media_pool_demand = {}
         self._session_locks = {}
         self._media_sessions_locks = {}
 
@@ -1447,6 +1450,7 @@ class Client(Methods):
                     log.warning(f"Download progress callback error: {e}")
 
             dc_id = file_id.dc_id
+            pool_lease = contextlib.AsyncExitStack()
 
             try:
                 _is_bot = self.me.is_bot if hasattr(self.me, 'is_bot') else False
@@ -1470,11 +1474,11 @@ class Client(Methods):
 
                 total_chunks = math.ceil((file_size - offset_bytes) / chunk_size)
                 pool_size = min(dl_pool_size, total_chunks)
-                total_workers = min(dl_pool_size * dl_workers_per_session, total_chunks)
                 needs_pool = min(total, total_chunks) > 1
                 if needs_pool:
-                    pool_task = asyncio.ensure_future(self._get_media_session_pool(dc_id, pool_size))
-                    pool_task.add_done_callback(lambda t: t.cancelled() or t.exception())
+                    pool_task = await pool_lease.enter_async_context(
+                        self._media_pool(dc_id, pool_size)
+                    )
 
                 session = await self.get_session(dc_id, is_media=True)
 
@@ -1534,13 +1538,14 @@ class Client(Methods):
                         return
 
                     total_chunks = math.ceil((file_size - offset_bytes) / chunk_size)
-                    pool_size = min(dl_pool_size, total_chunks)
-                    total_workers = min(dl_pool_size * dl_workers_per_session, total_chunks)
                     if needs_pool:
                         pool = await pool_task
                     else:
                         pool = []
                     n_sessions = len(pool)
+                    total_workers = min(
+                        dl_pool_size * dl_workers_per_session, total_chunks
+                    )
 
                     work = asyncio.Queue()
                     chunks_needed = min(
@@ -1794,6 +1799,8 @@ class Client(Methods):
                         await cdn_session.stop()
             except Exception:
                 raise
+            finally:
+                await pool_lease.aclose()
 
     async def get_session(
         self,
@@ -1972,6 +1979,26 @@ class Client(Methods):
         )
         await session.start(max_attempts=Session.MAX_RETRIES)
         return session
+
+    @contextlib.asynccontextmanager
+    async def _media_pool(self, dc_id: int, n: int):
+        self._media_pool_demand[dc_id] = self._media_pool_demand.get(dc_id, 0) + n
+        task = asyncio.ensure_future(
+            self._get_media_session_pool(
+                dc_id, min(self._media_pool_demand[dc_id], self.MEDIA_POOL_CAP)
+            )
+        )
+        task.add_done_callback(lambda t: t.cancelled() or t.exception())
+
+        try:
+            yield task
+        finally:
+            remaining = self._media_pool_demand.get(dc_id, n) - n
+
+            if remaining > 0:
+                self._media_pool_demand[dc_id] = remaining
+            else:
+                self._media_pool_demand.pop(dc_id, None)
 
     async def _get_media_session_pool(self, dc_id: int, n: int) -> list:
         lock = self._media_sessions_locks.setdefault(dc_id, asyncio.Lock())
