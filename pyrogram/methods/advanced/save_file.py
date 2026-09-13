@@ -33,6 +33,7 @@ import pyrogram
 from pyrogram import StopTransmission
 from pyrogram import raw
 from pyrogram.errors import RPCError
+from pyrogram.methods.rate_limiter import TokenBucket
 from pyrogram.session import Session
 
 log = logging.getLogger(__name__)
@@ -240,8 +241,7 @@ class SaveFile:
                 raise
 
             next_batch_task = None
-            _next_dispatch = 0.0
-            _dispatch_interval = 1.0 / rate_limit
+            _pacer = TokenBucket(rate=rate_limit, burst=max(n_workers, rate_limit / 10))
             _stalled_since = 0.0
 
             async def _report(parts: int) -> None:
@@ -301,10 +301,7 @@ class SaveFile:
                                 file_id=file_id, file_part=file_part, bytes=chunk
                             )
 
-                        _now = time.monotonic()
-                        if _now < _next_dispatch:
-                            await asyncio.sleep(_next_dispatch - _now)
-                        _next_dispatch = max(time.monotonic(), _next_dispatch) + _dispatch_interval
+                        await _pacer.acquire()
 
                         await budget.acquire()
 
