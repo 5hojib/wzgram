@@ -116,8 +116,6 @@ async def download(dc):
 
 @pytest.mark.parametrize("hash_span", [CHUNK, 2 * CHUNK, SIZE])
 async def test_cdn_download_accepts_hashes_reaching_past_the_chunk(hash_span):
-    # the CDN answers getCdnFileHashes from an offset onwards, not per chunk, so
-    # a hash has to be placed by its own offset rather than by its position
     assert await download(CdnDC(SIZE, hash_span)) == SIZE
 
 
@@ -138,3 +136,26 @@ async def test_cdn_download_reuses_hashes_it_already_holds():
 async def test_cdn_download_still_rejects_a_corrupted_chunk():
     with pytest.raises(CDNFileHashMismatch):
         await download(CdnDC(SIZE, SIZE, seed_hashes=True, corrupt_at=4 * CHUNK))
+
+
+async def test_cdn_download_writes_every_chunk_to_disk(tmp_path):
+    dc = CdnDC(SIZE, SIZE, seed_hashes=True)
+    client = make_client(dc, sessions=4)
+
+    async def stop():
+        pass
+
+    for session in await client._get_media_session_pool(2, 4):
+        session.stop = stop
+
+    path = await client.handle_download(
+        (document(), str(tmp_path), "cdn.bin", False, SIZE, None, ())
+    )
+
+    with open(path, "rb") as handle:
+        data = handle.read()
+
+    assert len(data) == SIZE
+
+    for n in range(SIZE // CHUNK):
+        assert data[n * CHUNK: (n + 1) * CHUNK] == bytes([n]) * CHUNK

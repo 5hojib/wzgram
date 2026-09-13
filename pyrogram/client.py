@@ -1783,6 +1783,9 @@ class Client(Methods):
                             if _stop_requested:
                                 raise pyrogram.StopTransmission
 
+                            if _write_file is not None:
+                                _write_file.write(decrypted_chunk)
+
                             yield decrypted_chunk
 
                             current += 1
