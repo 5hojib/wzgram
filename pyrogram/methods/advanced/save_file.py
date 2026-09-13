@@ -44,7 +44,7 @@ MAX_RETRIES = 16
 STALL_TIMEOUT = 900
 READ_BUFFER = 4 * 1024 * 1024
 MAX_BATCH = 4 * 1024 * 1024
-PACER_BURST = 4
+PACER_BURST = 8
 
 
 async def _stop_workers(queue: asyncio.Queue, workers: list) -> list:
