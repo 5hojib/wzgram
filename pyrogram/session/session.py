@@ -760,6 +760,7 @@ class Session:
     ):
         slept = 0.0
         flood_budget = sleep_threshold * Session.MAX_RETRIES
+        retries = max(1, retries)
 
         while retries > 0:
             if not self.is_started.is_set():
