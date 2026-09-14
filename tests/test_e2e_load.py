@@ -1,5 +1,6 @@
 import asyncio
 import os
+import time
 
 import pyrogram
 from pyrogram.client import write_at
@@ -118,6 +119,40 @@ async def test_a_download_writes_the_right_bytes_at_high_concurrency(tmp_path):
             assert set(window) == {expected_byte(part)}, (
                 f"file {i} part {part} landed at the wrong offset"
             )
+
+
+class FixedLatencyDC(FakeDC):
+    def _send_for(self, session):
+        inner = super()._send_for(session)
+
+        async def send(query, wait_response=True, timeout=None, retry=0):
+            self.inflight += 1
+            self.peak_inflight = max(self.peak_inflight, self.inflight)
+            try:
+                await asyncio.sleep(self.step)
+                return self._answer(query)
+            finally:
+                self.inflight -= 1
+
+        return send
+
+
+async def test_a_small_download_costs_one_round_trip():
+    rtt = 0.2
+    size = 8 * CHUNK
+    dc = FixedLatencyDC(size, step=rtt)
+    client = make_client(dc, sessions=6)
+
+    started = time.monotonic()
+    got = await asyncio.wait_for(stream_all(client, size), timeout=30)
+    elapsed = time.monotonic() - started
+
+    assert got == size
+    assert dc.served == size // CHUNK
+    assert elapsed < rtt * 1.8, (
+        f"{elapsed / rtt:.1f} round trips for an {size // CHUNK} MiB file that "
+        f"fits in one window of {dc.peak_inflight} requests"
+    )
 
 
 async def test_nothing_times_out_at_thirty_parallel_downloads():
