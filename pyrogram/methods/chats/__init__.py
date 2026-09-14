@@ -20,6 +20,8 @@ from .add_chat_members import AddChatMembers
 from .archive_chats import ArchiveChats
 from .ban_chat_member import BanChatMember
 from .close_forum_topic import CloseForumTopic
+from .pin_forum_topic import PinForumTopic
+from .unpin_forum_topic import UnpinForumTopic
 from .create_channel import CreateChannel
 from .create_folder import CreateFolder
 from .create_folder_invite_link import CreateFolderInviteLink
@@ -101,6 +103,8 @@ class Chats(
     ArchiveChats,
     BanChatMember,
     CloseForumTopic,
+    PinForumTopic,
+    UnpinForumTopic,
     CreateChannel,
     CreateFolder,
     CreateFolderInviteLink,

@@ -291,6 +291,7 @@ def pyrogram_api():
             leave_chat
             mark_chat_unread
             pin_chat_message
+            pin_forum_topic
             promote_chat_member
             restrict_chat_member
             restrict_sponsored_messages
@@ -317,6 +318,7 @@ def pyrogram_api():
             unban_chat_member
             unpin_all_chat_messages
             unpin_chat_message
+            unpin_forum_topic
             update_channel_color
             update_chat_notifications
         """,
