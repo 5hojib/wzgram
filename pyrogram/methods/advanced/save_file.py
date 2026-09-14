@@ -26,7 +26,6 @@ import math
 import os
 import time
 from hashlib import md5
-from pathlib import PurePath
 from typing import Union, BinaryIO, Callable, Optional
 
 import pyrogram
@@ -171,7 +170,7 @@ class SaveFile:
 
             part_size = PART_SIZE
 
-            if isinstance(path, (str, PurePath)):
+            if isinstance(path, (str, os.PathLike)):
                 fp = open(path, "rb", buffering=READ_BUFFER)
             elif isinstance(path, io.IOBase):
                 fp = path
@@ -388,5 +387,5 @@ class SaveFile:
                 budget.release_all()
                 await pool_lease.aclose()
 
-                if isinstance(path, (str, PurePath)):
+                if isinstance(path, (str, os.PathLike)):
                     fp.close()
