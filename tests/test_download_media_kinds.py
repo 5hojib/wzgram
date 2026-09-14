@@ -202,12 +202,32 @@ async def test_a_preview_without_a_thumbnail_is_not_downloadable(client):
         await client.download_media(preview, in_memory=True)
 
 
-async def test_a_thumbnail_file_name_from_the_server_cannot_escape_the_directory(client):
+async def test_a_thumbnail_lands_inside_the_download_directory(client):
     thumbnail = types.StrippedThumbnail(client=client, data=STRIPPED)
 
-    result = await client.download_media(thumbnail, file_name="../../evil.jpg")
+    result = await client.download_media(thumbnail)
 
-    assert os.path.basename(result) == "evil.jpg"
+    assert os.path.abspath(result).startswith(os.path.abspath(client.test_workdir))
+
+
+@pytest.mark.parametrize(
+    "given, expected",
+    [
+        ("../../evil.jpg", "evil.jpg"),
+        ("..\\..\\evil.jpg", "evil.jpg"),
+        ("/etc/passwd", "passwd"),
+        ("evil\x00.jpg", "evil.jpg"),
+        ("..", ""),
+        (".", ""),
+        ("", ""),
+        (None, ""),
+        ("plain.jpg", "plain.jpg"),
+    ],
+)
+def test_safe_file_name_strips_every_path_component(given, expected):
+    from pyrogram.methods.messages.download_media import safe_file_name
+
+    assert safe_file_name(given) == expected
 
 
 async def test_a_chat_photo_downloads_the_big_file(client):
