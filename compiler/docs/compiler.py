@@ -296,13 +296,18 @@ def pyrogram_api():
             restrict_chat_member
             restrict_sponsored_messages
             set_administrator_title
+            set_chat_accent_color
             set_chat_description
+            set_chat_direct_messages_group
+            set_chat_discussion_group
+            set_chat_member_tag
             set_chat_permissions
             set_chat_photo
             set_chat_protected_content
             set_chat_title
             set_chat_ttl
             set_chat_username
+            set_main_profile_tab
             set_send_as_chat
             set_slow_mode
             toggle_anti_spam
@@ -314,6 +319,7 @@ def pyrogram_api():
             toggle_signatures
             toggle_slow_mode
             toggle_view_forum_as_messages
+            transfer_chat_ownership
             unarchive_chats
             unban_chat_member
             unpin_all_chat_messages
@@ -347,6 +353,8 @@ def pyrogram_api():
             get_folders
             join_folder
             leave_folder
+            reorder_folders
+            toggle_folder_tags
         """,
         invite_links="""
         Invite Links
