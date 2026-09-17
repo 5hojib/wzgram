@@ -470,6 +470,7 @@ def pyrogram_api():
             send_video
             send_video_note
             send_voice
+            set_direct_messages_chat_topic_is_marked_as_unread
             stop_poll
             stream_media
             summarize_text
