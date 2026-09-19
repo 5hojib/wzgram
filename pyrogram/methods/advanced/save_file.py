@@ -31,6 +31,7 @@ from typing import Union, BinaryIO, Callable, Optional
 import pyrogram
 from pyrogram import StopTransmission
 from pyrogram import raw
+from pyrogram import utils
 from pyrogram.errors import RPCError
 from pyrogram.methods.rate_limiter import TokenBucket
 from pyrogram.session import Session
@@ -180,7 +181,7 @@ class SaveFile:
                     "or a binary (not text) file pointer"
                 )
 
-            file_name = getattr(fp, "name", "file.jpg")
+            file_name = utils.get_file_name(fp, fallback="file.jpg")
 
             fp.seek(0, os.SEEK_END)
             file_size = fp.tell()
