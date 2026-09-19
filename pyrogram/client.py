@@ -66,7 +66,8 @@ from pyrogram.storage import SQLiteStorage, Storage
 from pyrogram.types import LinkPreviewOptions, ListenerRegistry, TermsOfService, User
 from pyrogram.utils import ainput
 
-from .connection import Connection
+from .connection import Connection, Proxy
+from .connection.proxy import ProxyDict, normalize_proxy
 from .connection.transport import TCP, TCPAbridged
 from .dispatcher import Dispatcher
 from .file_id import FileId, FileType, ThumbnailSource
@@ -211,11 +212,23 @@ class Client(Methods):
             after which the server address will be updated (works both ways).
             Defaults to False (IPv4).
 
-        proxy (``dict``, *optional*):
-            The Proxy settings as dict.
-            E.g.: *dict(scheme="socks5", hostname="11.22.33.44", port=1234, username="user", password="pass")*.
-            The *scheme* can be "socks4", "socks5" or "http" and defaults to "socks5".
+        proxy (``str`` | ``dict`` | :obj:`~pyrogram.connection.Proxy`, *optional*):
+            The Proxy settings as a url, a dict, or one of the
+            :obj:`~pyrogram.connection.Proxy` dataclasses.
+            E.g.: *dict(scheme="socks5", hostname="11.22.33.44", port=1234, username="user", password="pass")*
+            or *"http://11.22.33.44:1234"* or *"socks5://user:pass@11.22.33.44:1234"* or
+            *"tg://socks?server=11.22.33.44&port=1234"*.
+            The *scheme* can be "socks4", "socks5", "http", "mtproxy" or "web".
             The *username* and *password* can be omitted if the proxy doesn't require authorization.
+            A WEB proxy takes *dict(scheme="web", hostname="relay.example.com", secret="...")* and a
+            classic MTProxy *dict(scheme="mtproxy", hostname="11.22.33.44", port=443, secret="...")*
+            or its ordinary share link *"tg://proxy?server=11.22.33.44&port=443&secret=..."*. A
+            secret is read as hex, base64url or base64. The mtproxy scheme also takes an ee-prefixed
+            secret, which appends the domain the connection then imitates a TLS session with;
+            the web scheme cannot, because the relay speaks obfuscated2 to its own MTProxy and
+            never adds the TLS record layer. A secret longer than 16 bytes - dd-prefixed or
+            ee-prefixed - asks for random padding, and the transport that sends it is picked
+            from the secret, so *proxy* is the only argument either scheme needs.
 
         test_mode (``bool``, *optional*):
             Enable or disable login to the test servers.
@@ -437,7 +450,7 @@ class Client(Methods):
         lang_code: str = LANG_CODE,
         system_lang_code: str = SYSTEM_LANG_CODE,
         ipv6: Optional[bool] = False,
-        proxy: Optional[dict] = None,
+        proxy: Optional[Union[str, ProxyDict, Proxy]] = None,
         test_mode: Optional[bool] = False,
         bot_token: Optional[str] = None,
         session_string: Optional[str] = None,
@@ -488,7 +501,7 @@ class Client(Methods):
         self.system_lang_code = system_lang_code.lower()
 
         self.ipv6 = ipv6
-        self.proxy = proxy
+        self.proxy = normalize_proxy(proxy)
         self.test_mode = test_mode
         self.bot_token = bot_token
         self.session_string = session_string

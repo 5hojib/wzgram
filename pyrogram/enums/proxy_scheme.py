@@ -16,29 +16,25 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
-from .connection import Connection, protocol_dc_id, transport_class_for, transport_error
-from .proxy import (
-    HTTPProxy,
-    MTProxy,
-    Proxy,
-    SOCKS4Proxy,
-    SOCKS5Proxy,
-    WebProxy,
-    client_proxy_address,
-    normalize_proxy,
-)
+from enum import auto
 
-__all__ = [
-    "Connection",
-    "HTTPProxy",
-    "MTProxy",
-    "Proxy",
-    "SOCKS4Proxy",
-    "SOCKS5Proxy",
-    "WebProxy",
-    "client_proxy_address",
-    "normalize_proxy",
-    "protocol_dc_id",
-    "transport_class_for",
-    "transport_error",
-]
+from .auto_name import AutoName
+
+
+class ProxyScheme(AutoName):
+    """Proxy scheme enumeration used in :obj:`~pyrogram.Client`'s ``proxy`` parameter."""
+
+    SOCKS4 = auto()
+    "SOCKS4 proxy"
+
+    SOCKS5 = auto()
+    "SOCKS5 proxy"
+
+    HTTP = auto()
+    "HTTP CONNECT proxy"
+
+    MTPROXY = auto()
+    "Classic MTProxy: obfuscated2 straight to the proxy host, no relay"
+
+    WEB = auto()
+    "WEB proxy: a long-poll HTTPS carrier to a hosted relay"

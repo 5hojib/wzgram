@@ -1164,6 +1164,7 @@ def pyrogram_api():
             PrivacyRuleType
             ProfileColor
             ProfileTab
+            ProxyScheme
             ReplyColor
             SentCodeType
             StickerType
