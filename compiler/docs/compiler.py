@@ -471,6 +471,7 @@ def pyrogram_api():
             send_video_note
             send_voice
             set_direct_messages_chat_topic_is_marked_as_unread
+            start_bot
             stop_poll
             stream_media
             summarize_text
@@ -578,6 +579,7 @@ def pyrogram_api():
             get_default_emoji_statuses
             get_me
             get_users
+            set_bot_profile_photo
             set_emoji_status
             set_personal_channel
             set_profile_photo

@@ -100,6 +100,7 @@ from .send_video import SendVideo
 from .send_video_note import SendVideoNote
 from .send_voice import SendVoice
 from .set_direct_messages_chat_topic_is_marked_as_unread import SetDirectMessagesChatTopicIsMarkedAsUnread
+from .start_bot import StartBot
 from .stop_poll import StopPoll
 from .stream_media import StreamMedia
 from .summarize_text import SummarizeText
@@ -193,6 +194,7 @@ class Messages(
     SendVideoNote,
     SendVoice,
     SetDirectMessagesChatTopicIsMarkedAsUnread,
+    StartBot,
     StopPoll,
     StreamMedia,
     SummarizeText,
