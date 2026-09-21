@@ -4592,6 +4592,326 @@ class Message(Object, Update):
             reply_markup=reply_markup
         )
 
+    async def reply_live_photo(
+        self,
+        live_photo: Union[str, BinaryIO],
+        photo: Union[str, BinaryIO],
+        caption: str = "",
+        parse_mode: Optional["enums.ParseMode"] = None,
+        caption_entities: Optional[List["types.MessageEntity"]] = None,
+        has_spoiler: Optional[bool] = None,
+        width: int = 0,
+        height: int = 0,
+        disable_notification: Optional[bool] = None,
+        message_thread_id: Optional[int] = None,
+        direct_messages_topic_id: Optional[int] = None,
+        effect_id: Optional[int] = None,
+        show_caption_above_media: Optional[bool] = None,
+        reply_parameters: Optional["types.ReplyParameters"] = None,
+        schedule_date: Optional[datetime] = None,
+        repeat_period: Optional[int] = None,
+        protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
+        paid_message_star_count: Optional[int] = None,
+        suggested_post_parameters: Optional["types.SuggestedPostParameters"] = None,
+        ephemeral_message_parameters: Optional["types.EphemeralMessageParameters"] = None,
+        reply_markup: Optional[
+            Union[
+                "types.InlineKeyboardMarkup",
+                "types.ReplyKeyboardMarkup",
+                "types.ReplyKeyboardRemove",
+                "types.ForceReply"
+            ]
+        ] = None,
+        progress: Optional[Callable] = None,
+        progress_args: tuple = ()
+    ) -> Optional["Message"]:
+        """Shortcut for method :obj:`~pyrogram.Client.send_live_photo` will automatically fill method attributes:
+
+        * chat_id
+        * message_thread_id
+        * direct_messages_topic_id
+        * business_connection_id
+        * reply_parameters
+
+        Parameters:
+            live_photo (``str`` | ``BinaryIO``):
+                Video part of the live photo, as a local path or a file-like object.
+
+            photo (``str`` | ``BinaryIO``):
+                Still part of the live photo, as a local path or a file-like object.
+
+            caption (``str``, *optional*):
+                Caption of the live photo, 0-1024 characters.
+
+            parse_mode (:obj:`~pyrogram.enums.ParseMode`, *optional*):
+                By default, texts are parsed using both Markdown and HTML styles.
+                You can combine both syntaxes together.
+
+            caption_entities (List of :obj:`~pyrogram.types.MessageEntity`, *optional*):
+                List of special entities that appear in the caption, which can be specified instead of *parse_mode*.
+
+            has_spoiler (``bool``, *optional*):
+                Pass True if the live photo needs to be covered with a spoiler animation.
+
+            width (``int``, *optional*):
+                Width of the video part.
+
+            height (``int``, *optional*):
+                Height of the video part.
+
+            disable_notification (``bool``, *optional*):
+                Sends the message silently.
+                Users will receive a notification with no sound.
+
+            message_thread_id (``int``, *optional*):
+                Unique identifier for the target message thread (topic) of the forum.
+
+            direct_messages_topic_id (``int``, *optional*):
+                Unique identifier of the direct messages topic.
+
+            effect_id (``int``, *optional*):
+                Unique identifier of the effect to apply to the message.
+
+            show_caption_above_media (``bool``, *optional*):
+                Pass True, if the caption must be shown above the message media.
+
+            reply_parameters (:obj:`~pyrogram.types.ReplyParameters`, *optional*):
+                Describes reply parameters for the message that is being sent.
+
+            schedule_date (:py:obj:`~datetime.datetime`, *optional*):
+                Date when the message will be automatically sent.
+
+            repeat_period (``int``, *optional*):
+                Period after which the message will be sent again in seconds.
+
+            protect_content (``bool``, *optional*):
+                Protects the contents of the sent message from forwarding and saving.
+
+            allow_paid_broadcast (``bool``, *optional*):
+                Pay to skip the broadcast flood limit.
+
+            paid_message_star_count (``int``, *optional*):
+                The number of Telegram Stars the user agreed to pay to send the message.
+
+            suggested_post_parameters (:obj:`~pyrogram.types.SuggestedPostParameters`, *optional*):
+                Parameters of the suggested post.
+
+            ephemeral_message_parameters (:obj:`~pyrogram.types.EphemeralMessageParameters`, *optional*):
+                Parameters of the ephemeral message to send.
+
+            reply_markup (:obj:`~pyrogram.types.InlineKeyboardMarkup` | :obj:`~pyrogram.types.ReplyKeyboardMarkup` | :obj:`~pyrogram.types.ReplyKeyboardRemove` | :obj:`~pyrogram.types.ForceReply`, *optional*):
+                Additional interface options. An object for an inline keyboard, custom reply keyboard,
+                instructions to remove reply keyboard or to force a reply from the user.
+
+            progress (``Callable``, *optional*):
+                Pass a callback function to view the file transmission progress.
+
+            progress_args (``tuple``, *optional*):
+                Extra custom arguments for the progress callback function.
+
+        Returns:
+            On success, the sent :obj:`~pyrogram.types.Message` is returned.
+
+        Raises:
+            RPCError: In case of a Telegram RPC error.
+        """
+        if reply_parameters is None:
+            reply_parameters = types.ReplyParameters(message_id=self.id)
+
+        if message_thread_id is None:
+            message_thread_id = self.message_thread_id
+
+        if direct_messages_topic_id is None:
+            direct_messages_topic_id = self.direct_messages_topic_id
+
+        return await self._client.send_live_photo(
+            chat_id=self.chat.id,
+            live_photo=live_photo,
+            photo=photo,
+            caption=caption,
+            parse_mode=parse_mode,
+            caption_entities=caption_entities,
+            has_spoiler=has_spoiler,
+            width=width,
+            height=height,
+            disable_notification=disable_notification,
+            message_thread_id=message_thread_id,
+            direct_messages_topic_id=direct_messages_topic_id,
+            effect_id=effect_id,
+            show_caption_above_media=show_caption_above_media,
+            reply_parameters=reply_parameters,
+            schedule_date=schedule_date,
+            repeat_period=repeat_period,
+            protect_content=protect_content,
+            business_connection_id=self.business_connection_id,
+            allow_paid_broadcast=allow_paid_broadcast,
+            paid_message_star_count=paid_message_star_count,
+            suggested_post_parameters=suggested_post_parameters,
+            ephemeral_message_parameters=ephemeral_message_parameters,
+            reply_markup=reply_markup,
+            progress=progress,
+            progress_args=progress_args
+        )
+
+    async def answer_live_photo(
+        self,
+        live_photo: Union[str, BinaryIO],
+        photo: Union[str, BinaryIO],
+        caption: str = "",
+        parse_mode: Optional["enums.ParseMode"] = None,
+        caption_entities: Optional[List["types.MessageEntity"]] = None,
+        has_spoiler: Optional[bool] = None,
+        width: int = 0,
+        height: int = 0,
+        disable_notification: Optional[bool] = None,
+        message_thread_id: Optional[int] = None,
+        direct_messages_topic_id: Optional[int] = None,
+        effect_id: Optional[int] = None,
+        show_caption_above_media: Optional[bool] = None,
+        reply_parameters: Optional["types.ReplyParameters"] = None,
+        schedule_date: Optional[datetime] = None,
+        repeat_period: Optional[int] = None,
+        protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
+        paid_message_star_count: Optional[int] = None,
+        suggested_post_parameters: Optional["types.SuggestedPostParameters"] = None,
+        ephemeral_message_parameters: Optional["types.EphemeralMessageParameters"] = None,
+        reply_markup: Optional[
+            Union[
+                "types.InlineKeyboardMarkup",
+                "types.ReplyKeyboardMarkup",
+                "types.ReplyKeyboardRemove",
+                "types.ForceReply"
+            ]
+        ] = None,
+        progress: Optional[Callable] = None,
+        progress_args: tuple = ()
+    ) -> Optional["Message"]:
+        """Shortcut for method :obj:`~pyrogram.Client.send_live_photo` will automatically fill method attributes:
+
+        * chat_id
+        * message_thread_id
+        * direct_messages_topic_id
+        * business_connection_id
+
+        Parameters:
+            live_photo (``str`` | ``BinaryIO``):
+                Video part of the live photo, as a local path or a file-like object.
+
+            photo (``str`` | ``BinaryIO``):
+                Still part of the live photo, as a local path or a file-like object.
+
+            caption (``str``, *optional*):
+                Caption of the live photo, 0-1024 characters.
+
+            parse_mode (:obj:`~pyrogram.enums.ParseMode`, *optional*):
+                By default, texts are parsed using both Markdown and HTML styles.
+                You can combine both syntaxes together.
+
+            caption_entities (List of :obj:`~pyrogram.types.MessageEntity`, *optional*):
+                List of special entities that appear in the caption, which can be specified instead of *parse_mode*.
+
+            has_spoiler (``bool``, *optional*):
+                Pass True if the live photo needs to be covered with a spoiler animation.
+
+            width (``int``, *optional*):
+                Width of the video part.
+
+            height (``int``, *optional*):
+                Height of the video part.
+
+            disable_notification (``bool``, *optional*):
+                Sends the message silently.
+                Users will receive a notification with no sound.
+
+            message_thread_id (``int``, *optional*):
+                Unique identifier for the target message thread (topic) of the forum.
+
+            direct_messages_topic_id (``int``, *optional*):
+                Unique identifier of the direct messages topic.
+
+            effect_id (``int``, *optional*):
+                Unique identifier of the effect to apply to the message.
+
+            show_caption_above_media (``bool``, *optional*):
+                Pass True, if the caption must be shown above the message media.
+
+            reply_parameters (:obj:`~pyrogram.types.ReplyParameters`, *optional*):
+                Describes reply parameters for the message that is being sent.
+
+            schedule_date (:py:obj:`~datetime.datetime`, *optional*):
+                Date when the message will be automatically sent.
+
+            repeat_period (``int``, *optional*):
+                Period after which the message will be sent again in seconds.
+
+            protect_content (``bool``, *optional*):
+                Protects the contents of the sent message from forwarding and saving.
+
+            allow_paid_broadcast (``bool``, *optional*):
+                Pay to skip the broadcast flood limit.
+
+            paid_message_star_count (``int``, *optional*):
+                The number of Telegram Stars the user agreed to pay to send the message.
+
+            suggested_post_parameters (:obj:`~pyrogram.types.SuggestedPostParameters`, *optional*):
+                Parameters of the suggested post.
+
+            ephemeral_message_parameters (:obj:`~pyrogram.types.EphemeralMessageParameters`, *optional*):
+                Parameters of the ephemeral message to send.
+
+            reply_markup (:obj:`~pyrogram.types.InlineKeyboardMarkup` | :obj:`~pyrogram.types.ReplyKeyboardMarkup` | :obj:`~pyrogram.types.ReplyKeyboardRemove` | :obj:`~pyrogram.types.ForceReply`, *optional*):
+                Additional interface options. An object for an inline keyboard, custom reply keyboard,
+                instructions to remove reply keyboard or to force a reply from the user.
+
+            progress (``Callable``, *optional*):
+                Pass a callback function to view the file transmission progress.
+
+            progress_args (``tuple``, *optional*):
+                Extra custom arguments for the progress callback function.
+
+        Returns:
+            On success, the sent :obj:`~pyrogram.types.Message` is returned.
+
+        Raises:
+            RPCError: In case of a Telegram RPC error.
+        """
+        if message_thread_id is None:
+            message_thread_id = self.message_thread_id
+
+        if direct_messages_topic_id is None:
+            direct_messages_topic_id = self.direct_messages_topic_id
+
+        return await self._client.send_live_photo(
+            chat_id=self.chat.id,
+            live_photo=live_photo,
+            photo=photo,
+            caption=caption,
+            parse_mode=parse_mode,
+            caption_entities=caption_entities,
+            has_spoiler=has_spoiler,
+            width=width,
+            height=height,
+            disable_notification=disable_notification,
+            message_thread_id=message_thread_id,
+            direct_messages_topic_id=direct_messages_topic_id,
+            effect_id=effect_id,
+            show_caption_above_media=show_caption_above_media,
+            reply_parameters=reply_parameters,
+            schedule_date=schedule_date,
+            repeat_period=repeat_period,
+            protect_content=protect_content,
+            business_connection_id=self.business_connection_id,
+            allow_paid_broadcast=allow_paid_broadcast,
+            paid_message_star_count=paid_message_star_count,
+            suggested_post_parameters=suggested_post_parameters,
+            ephemeral_message_parameters=ephemeral_message_parameters,
+            reply_markup=reply_markup,
+            progress=progress,
+            progress_args=progress_args
+        )
+
     async def reply_media_group(
         self,
         media: List[Union["types.InputMediaPhoto", "types.InputMediaVideo"]],
@@ -5370,6 +5690,7 @@ class Message(Object, Update):
         has_spoiler: Optional[bool] = None,
         show_caption_above_media: Optional[bool] = None,
         ttl_seconds: Optional[int] = None,
+        view_once: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         message_thread_id: Optional[int] = None,
         direct_messages_topic_id: Optional[int] = None,
@@ -5432,6 +5753,11 @@ class Message(Object, Update):
                 Self-Destruct Timer.
                 If you set a timer, the photo will self-destruct in *ttl_seconds*
                 seconds after it was viewed.
+
+            view_once (``bool``, *optional*):
+                Pass True if the photo must be opened once and disappear afterwards.
+                Self-destructing media only works in private chats; a group or a
+                channel drops the timer.
 
             disable_notification (``bool``, *optional*):
                 Sends the message silently.
@@ -5537,6 +5863,7 @@ class Message(Object, Update):
             has_spoiler=has_spoiler,
             show_caption_above_media=show_caption_above_media,
             ttl_seconds=ttl_seconds,
+            view_once=view_once,
             disable_notification=disable_notification,
             message_thread_id=message_thread_id,
             direct_messages_topic_id=direct_messages_topic_id,
@@ -5567,6 +5894,7 @@ class Message(Object, Update):
         has_spoiler: Optional[bool] = None,
         show_caption_above_media: Optional[bool] = None,
         ttl_seconds: Optional[int] = None,
+        view_once: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         message_thread_id: Optional[int] = None,
         direct_messages_topic_id: Optional[int] = None,
@@ -5623,6 +5951,11 @@ class Message(Object, Update):
                 Self-Destruct Timer.
                 If you set a timer, the photo will self-destruct in *ttl_seconds*
                 seconds after it was viewed.
+
+            view_once (``bool``, *optional*):
+                Pass True if the photo must be opened once and disappear afterwards.
+                Self-destructing media only works in private chats; a group or a
+                channel drops the timer.
 
             disable_notification (``bool``, *optional*):
                 Sends the message silently.
@@ -5713,6 +6046,7 @@ class Message(Object, Update):
             has_spoiler=has_spoiler,
             show_caption_above_media=show_caption_above_media,
             ttl_seconds=ttl_seconds,
+            view_once=view_once,
             disable_notification=disable_notification,
             message_thread_id=message_thread_id,
             direct_messages_topic_id=direct_messages_topic_id,
@@ -6357,6 +6691,10 @@ class Message(Object, Update):
     async def reply_sticker(
         self,
         sticker: Union[str, BinaryIO],
+        emoji: Optional[str] = None,
+        caption: str = "",
+        parse_mode: Optional["enums.ParseMode"] = None,
+        caption_entities: Optional[List["types.MessageEntity"]] = None,
         disable_notification: Optional[bool] = None,
         message_thread_id: Optional[int] = None,
         direct_messages_topic_id: Optional[int] = None,
@@ -6408,6 +6746,19 @@ class Message(Object, Update):
                 You can combine both syntaxes together.
 
             caption_entities (List of :obj:`~pyrogram.types.MessageEntity`):
+                List of special entities that appear in the caption, which can be specified instead of *parse_mode*.
+
+            emoji (``str``, *optional*):
+                Emoji the sticker stands for, shown while the sticker is being uploaded.
+
+            caption (``str``, *optional*):
+                Caption of the sticker, 0-1024 characters.
+
+            parse_mode (:obj:`~pyrogram.enums.ParseMode`, *optional*):
+                By default, texts are parsed using both Markdown and HTML styles.
+                You can combine both syntaxes together.
+
+            caption_entities (List of :obj:`~pyrogram.types.MessageEntity`, *optional*):
                 List of special entities that appear in the caption, which can be specified instead of *parse_mode*.
 
             disable_notification (``bool``, *optional*):
@@ -6509,6 +6860,10 @@ class Message(Object, Update):
             chat_id=self.chat.id,
             sticker=sticker,
             disable_notification=disable_notification,
+            emoji=emoji,
+            caption=caption,
+            parse_mode=parse_mode,
+            caption_entities=caption_entities,
             protect_content=protect_content,
             message_thread_id=message_thread_id,
             direct_messages_topic_id=direct_messages_topic_id,
@@ -6532,6 +6887,10 @@ class Message(Object, Update):
     async def answer_sticker(
         self,
         sticker: Union[str, BinaryIO],
+        emoji: Optional[str] = None,
+        caption: str = "",
+        parse_mode: Optional["enums.ParseMode"] = None,
+        caption_entities: Optional[List["types.MessageEntity"]] = None,
         disable_notification: Optional[bool] = None,
         message_thread_id: Optional[int] = None,
         direct_messages_topic_id: Optional[int] = None,
@@ -6577,6 +6936,19 @@ class Message(Object, Update):
                 You can combine both syntaxes together.
 
             caption_entities (List of :obj:`~pyrogram.types.MessageEntity`):
+                List of special entities that appear in the caption, which can be specified instead of *parse_mode*.
+
+            emoji (``str``, *optional*):
+                Emoji the sticker stands for, shown while the sticker is being uploaded.
+
+            caption (``str``, *optional*):
+                Caption of the sticker, 0-1024 characters.
+
+            parse_mode (:obj:`~pyrogram.enums.ParseMode`, *optional*):
+                By default, texts are parsed using both Markdown and HTML styles.
+                You can combine both syntaxes together.
+
+            caption_entities (List of :obj:`~pyrogram.types.MessageEntity`, *optional*):
                 List of special entities that appear in the caption, which can be specified instead of *parse_mode*.
 
             disable_notification (``bool``, *optional*):
@@ -6663,6 +7035,10 @@ class Message(Object, Update):
             chat_id=self.chat.id,
             sticker=sticker,
             disable_notification=disable_notification,
+            emoji=emoji,
+            caption=caption,
+            parse_mode=parse_mode,
+            caption_entities=caption_entities,
             protect_content=protect_content,
             message_thread_id=message_thread_id,
             direct_messages_topic_id=direct_messages_topic_id,
@@ -6979,6 +7355,7 @@ class Message(Object, Update):
         thumb: Optional[Union[str, BinaryIO]] = None,
         file_name: Optional[str] = None,
         supports_streaming: bool = True,
+        view_once: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         message_thread_id: Optional[int] = None,
         direct_messages_topic_id: Optional[int] = None,
@@ -7074,6 +7451,11 @@ class Message(Object, Update):
 
             supports_streaming (``bool``, *optional*):
                 Pass True, if the uploaded video is suitable for streaming.
+
+            view_once (``bool``, *optional*):
+                Pass True if the video must be opened once and disappear afterwards.
+                Self-destructing media only works in private chats; a group or a
+                channel drops the timer.
 
             disable_notification (``bool``, *optional*):
                 Sends the message silently.
@@ -7202,6 +7584,7 @@ class Message(Object, Update):
             has_spoiler=has_spoiler,
             show_caption_above_media=show_caption_above_media,
             ttl_seconds=ttl_seconds,
+            view_once=view_once,
 
             duration=duration,
             width=width,
@@ -7251,6 +7634,7 @@ class Message(Object, Update):
         thumb: Optional[Union[str, BinaryIO]] = None,
         file_name: Optional[str] = None,
         supports_streaming: bool = True,
+        view_once: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         message_thread_id: Optional[int] = None,
         direct_messages_topic_id: Optional[int] = None,
@@ -7341,6 +7725,11 @@ class Message(Object, Update):
 
             supports_streaming (``bool``, *optional*):
                 Pass True, if the uploaded video is suitable for streaming.
+
+            view_once (``bool``, *optional*):
+                Pass True if the video must be opened once and disappear afterwards.
+                Self-destructing media only works in private chats; a group or a
+                channel drops the timer.
 
             disable_notification (``bool``, *optional*):
                 Sends the message silently.
@@ -7440,6 +7829,7 @@ class Message(Object, Update):
             has_spoiler=has_spoiler,
             show_caption_above_media=show_caption_above_media,
             ttl_seconds=ttl_seconds,
+            view_once=view_once,
 
             duration=duration,
             width=width,
@@ -7473,6 +7863,7 @@ class Message(Object, Update):
         duration: int = 0,
         length: int = 1,
         thumb: Optional[Union[str, BinaryIO]] = None,
+        view_once: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         message_thread_id: Optional[int] = None,
         direct_messages_topic_id: Optional[int] = None,
@@ -7528,6 +7919,11 @@ class Message(Object, Update):
                 The thumbnail should be in JPEG format and less than 200 KB in size.
                 A thumbnail's width and height should not exceed 320 pixels.
                 Thumbnails can't be reused and can be only uploaded as a new file.
+
+            view_once (``bool``, *optional*):
+                Pass True if the video note must be opened once and disappear afterwards.
+                Self-destructing media only works in private chats; a group or a
+                channel drops the timer.
 
             disable_notification (``bool``, *optional*):
                 Sends the message silently.
@@ -7632,6 +8028,7 @@ class Message(Object, Update):
             length=length,
             thumb=thumb,
             disable_notification=disable_notification,
+            view_once=view_once,
             message_thread_id=message_thread_id,
             direct_messages_topic_id=direct_messages_topic_id,
             effect_id=effect_id,
@@ -7659,6 +8056,7 @@ class Message(Object, Update):
         duration: int = 0,
         length: int = 1,
         thumb: Optional[Union[str, BinaryIO]] = None,
+        view_once: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         message_thread_id: Optional[int] = None,
         direct_messages_topic_id: Optional[int] = None,
@@ -7707,6 +8105,11 @@ class Message(Object, Update):
                 The thumbnail should be in JPEG format and less than 200 KB in size.
                 A thumbnail's width and height should not exceed 320 pixels.
                 Thumbnails can't be reused and can be only uploaded as a new file.
+
+            view_once (``bool``, *optional*):
+                Pass True if the video note must be opened once and disappear afterwards.
+                Self-destructing media only works in private chats; a group or a
+                channel drops the timer.
 
             disable_notification (``bool``, *optional*):
                 Sends the message silently.
@@ -7796,6 +8199,7 @@ class Message(Object, Update):
             length=length,
             thumb=thumb,
             disable_notification=disable_notification,
+            view_once=view_once,
             message_thread_id=message_thread_id,
             direct_messages_topic_id=direct_messages_topic_id,
             effect_id=effect_id,
@@ -7820,6 +8224,8 @@ class Message(Object, Update):
         parse_mode: Optional["enums.ParseMode"] = None,
         caption_entities: Optional[List["types.MessageEntity"]] = None,
         duration: int = 0,
+        waveform: Optional[bytes] = None,
+        view_once: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         message_thread_id: Optional[int] = None,
         direct_messages_topic_id: Optional[int] = None,
@@ -7875,6 +8281,14 @@ class Message(Object, Update):
 
             duration (``int``, *optional*):
                 Duration of the voice message in seconds.
+
+            waveform (``bytes``, *optional*):
+                The waveform of the voice note, as a 5-bit byte string.
+
+            view_once (``bool``, *optional*):
+                Pass True if the voice note must be opened once and disappear afterwards.
+                Self-destructing media only works in private chats; a group or a
+                channel drops the timer.
 
             disable_notification (``bool``, *optional*):
                 Sends the message silently.
@@ -7980,6 +8394,8 @@ class Message(Object, Update):
             caption_entities=caption_entities,
             duration=duration,
             disable_notification=disable_notification,
+            waveform=waveform,
+            view_once=view_once,
             protect_content=protect_content,
             message_thread_id=message_thread_id,
             direct_messages_topic_id=direct_messages_topic_id,
@@ -8008,6 +8424,8 @@ class Message(Object, Update):
         parse_mode: Optional["enums.ParseMode"] = None,
         caption_entities: Optional[List["types.MessageEntity"]] = None,
         duration: int = 0,
+        waveform: Optional[bytes] = None,
+        view_once: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         message_thread_id: Optional[int] = None,
         direct_messages_topic_id: Optional[int] = None,
@@ -8057,6 +8475,14 @@ class Message(Object, Update):
 
             duration (``int``, *optional*):
                 Duration of the voice message in seconds.
+
+            waveform (``bytes``, *optional*):
+                The waveform of the voice note, as a 5-bit byte string.
+
+            view_once (``bool``, *optional*):
+                Pass True if the voice note must be opened once and disappear afterwards.
+                Self-destructing media only works in private chats; a group or a
+                channel drops the timer.
 
             disable_notification (``bool``, *optional*):
                 Sends the message silently.
@@ -8147,6 +8573,8 @@ class Message(Object, Update):
             caption_entities=caption_entities,
             duration=duration,
             disable_notification=disable_notification,
+            waveform=waveform,
+            view_once=view_once,
             protect_content=protect_content,
             message_thread_id=message_thread_id,
             direct_messages_topic_id=direct_messages_topic_id,

@@ -22,6 +22,8 @@ from typing import BinaryIO, Callable, List, Optional, Union
 import pyrogram
 from pyrogram import enums, raw, types, utils
 
+from ..ephemeral.as_ephemeral import as_ephemeral
+
 
 class SendLivePhoto:
     async def send_live_photo(
@@ -56,8 +58,10 @@ class SendLivePhoto:
                 "types.ForceReply"
             ]
         ] = None,
+        ephemeral_message_parameters: Optional["types.EphemeralMessageParameters"] = None,
         progress: Optional[Callable] = None,
-        progress_args: tuple = ()
+        progress_args: tuple = (),
+        **kwargs
     ) -> Optional["types.Message"]:
         """Send a live photo, a still image paired with the short video it was taken with.
 
@@ -136,6 +140,9 @@ class SendLivePhoto:
                 Additional interface options. An object for an inline keyboard, custom reply keyboard,
                 instructions to remove reply keyboard or to force a reply from the user.
 
+            ephemeral_message_parameters (:obj:`~pyrogram.types.EphemeralMessageParameters`, *optional*):
+                Parameters of the ephemeral message to send.
+
             progress (``Callable``, *optional*):
                 Pass a callback function to view the file transmission progress.
 
@@ -150,6 +157,9 @@ class SendLivePhoto:
 
                 await app.send_live_photo(chat_id, "clip.mp4", "still.jpg")
         """
+        if kwargs:
+            raise TypeError(f"Got unexpected keyword argument(s): {set(kwargs)}")
+
         media = await types.InputMediaLivePhoto(
             media=live_photo,
             photo=photo,
@@ -169,7 +179,7 @@ class SendLivePhoto:
         text_params = await utils.parse_text_entities(self, caption, parse_mode, caption_entities)
 
         r = await self.invoke(
-            raw.functions.messages.SendMedia(
+            await as_ephemeral(self, ephemeral_message_parameters, raw.functions.messages.SendMedia(
                 peer=await self.resolve_peer(chat_id),
                 media=media,
                 silent=disable_notification if disable_notification is not None else None,
@@ -190,7 +200,7 @@ class SendLivePhoto:
                 suggested_post=suggested_post_parameters.write() if suggested_post_parameters else None,
                 reply_markup=await reply_markup.write(self) if reply_markup else None,
                 **text_params
-            ),
+            )),
             sleep_threshold=60,
             business_connection_id=business_connection_id
         )

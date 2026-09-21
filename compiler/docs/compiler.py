@@ -1253,6 +1253,7 @@ def pyrogram_api():
             Message.reply_game
             Message.reply_inline_bot_result
             Message.reply_invoice
+            Message.reply_live_photo
             Message.reply_location
             Message.reply_media_group
             Message.reply_paid_media
@@ -1275,6 +1276,7 @@ def pyrogram_api():
             Message.answer_game
             Message.answer_inline_bot_result
             Message.answer_invoice
+            Message.answer_live_photo
             Message.answer_location
             Message.answer_media_group
             Message.answer_paid_media

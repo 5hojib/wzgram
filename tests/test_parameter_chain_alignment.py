@@ -356,6 +356,7 @@ def test_kwargs_guard_on_all_send_methods():
     methods_to_check = [
         "send_video", "send_photo", "send_animation", "send_voice",
         "send_video_note", "send_audio", "send_document", "send_sticker",
+        "send_live_photo",
         "send_media_group",
     ]
     
