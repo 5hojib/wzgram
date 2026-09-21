@@ -119,9 +119,6 @@ NO_UPDATES_QUERY_NAMES = frozenset({
     "messages.SetTyping",
     "stickers.CheckShortName",
     "stickers.SuggestShortName",
-    "updates.GetChannelDifference",
-    "updates.GetDifference",
-    "updates.GetState",
     "upload.GetFile",
     "upload.GetWebFile",
     "upload.ReuploadCdnFile",
@@ -179,6 +176,8 @@ class Invoke:
         fqn = inner.QUALNAME if hasattr(inner, "QUALNAME") else None
         if fqn and fqn.startswith("functions."):
             fqn = fqn[len("functions."):]
+        if fqn and fqn.startswith("updates."):
+            return True
         if fqn and fqn in NO_UPDATES_QUERY_NAMES:
             return False
 
