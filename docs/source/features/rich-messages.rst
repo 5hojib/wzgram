@@ -102,8 +102,10 @@ Block                                          What it is
 Attaching media
 ---------------
 
-Media in a rich message must **already exist on Telegram**. You pass a file identifier, an
-``InputPhoto`` or an ``InputDocument`` — never a local path. Nothing here uploads.
+A rich message refers to media that lives on Telegram. You can hand it one that is already
+there — a file identifier, an ``InputPhoto`` or an ``InputDocument`` — or an
+:obj:`~pyrogram.types.InputMedia` object holding a local path or an HTTP URL, which is
+uploaded for you when the message is sent.
 
 How you attach it depends on which of the three forms you used, and
 :obj:`~pyrogram.types.InputRichMessageMedia` covers both shapes:
@@ -113,21 +115,35 @@ refers to it with a ``tg://`` link:
 
 .. code-block:: python
 
-    from wzgram.types import InputRichMessage, InputRichMessageMedia
+    from wzgram.types import InputMediaPhoto, InputRichMessage, InputRichMessageMedia
 
     await app.send_rich_message(
         chat_id="me",
         rich_text=InputRichMessage(
             html='<p>Here it is:</p><img src="tg://photo?id=cover">',
-            media=[InputRichMessageMedia(id="cover", media=photo_file_id)],
+            media=[InputRichMessageMedia(id="cover", media=InputMediaPhoto("cover.jpg"))],
         ),
     )
 
-The scheme says what kind of media it is: ``tg://photo?id=``, ``tg://video?id=`` or
-``tg://audio?id=``.
+A file identifier works in the same place: ``InputRichMessageMedia(id="cover",
+media=photo_file_id)``. The scheme says what kind of media it is: ``tg://photo?id=``,
+``tg://video?id=`` or ``tg://audio?id=``.
 
-**blocks** — the media travels as bare vectors that the blocks point into, so the entry
-carries ``photos``, ``documents`` or ``users`` rather than a single ``media``:
+**blocks** — a media block takes the file directly, and the vectors the wire format needs
+are built while the message is sent:
+
+.. code-block:: python
+
+    InputRichMessage(
+        blocks=[InputRichBlockPhoto(photo=InputMediaPhoto("cover.jpg"), caption="The cover")],
+    )
+
+The parameter is named after the block: ``photo`` for
+:obj:`~pyrogram.types.InputRichBlockPhoto`, ``video``, ``animation``, ``audio``, ``voice``
+and ``document`` for the others. Each takes a file identifier or an ``InputMedia`` object.
+
+If you have already uploaded the file and hold its raw type, pass the identifier instead
+and carry the vectors yourself:
 
 .. code-block:: python
 
@@ -139,6 +155,9 @@ carries ``photos``, ``documents`` or ``users`` rather than a single ``media``:
 A block's ``photo_id`` / ``video_id`` / ``audio_id`` must equal the ``id`` attribute of the
 corresponding ``InputPhoto`` or ``InputDocument`` in those vectors. MTProto carries no
 string identifiers on this side, which is why the two shapes differ at all.
+
+Users mentioned by a block travel in a vector of their own; they are collected from the
+blocks and resolved for you.
 
 Buttons
 -------
@@ -277,8 +296,8 @@ When ``rich_text`` is set, ``text`` is ignored.
 Gotchas
 -------
 
-- A local file path in ``media`` is refused, not uploaded. Send the file somewhere first —
-  a saved-messages chat is the usual trick — and use the identifier it comes back with.
+- A bare local path is still refused: a string is read as a file identifier. Wrap the path
+  in an ``InputMedia`` object — ``InputMediaPhoto("cover.jpg")`` — to have it uploaded.
 - With ``html`` and ``markdown``, the ``id`` in the media entry and the ``id=`` in the
   ``tg://`` link must match exactly. A typo means the media is dropped rather than an error.
 - With ``blocks``, a block's ``photo_id`` is the *file's own* id, not a position in the

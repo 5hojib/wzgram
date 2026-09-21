@@ -20,7 +20,7 @@ import logging
 from typing import List, Optional, Union
 
 import pyrogram
-from pyrogram import enums, types, utils
+from pyrogram import enums, raw, types, utils
 
 from .edit_ephemeral_message import edit_ephemeral
 
@@ -40,6 +40,7 @@ class EditEphemeralMessageText:
         rich_text_parse_mode: "enums.ParseMode" = enums.ParseMode.MARKDOWN,
         rich_text_media: Optional[List["types.InputRichMessageMedia"]] = None,
         rich_message: Optional["types.InputRichMessage"] = None,
+        link_preview_options: Optional["types.LinkPreviewOptions"] = None,
         reply_markup: Optional["types.InlineKeyboardMarkup"] = None,
         welcome: Optional[bool] = None,
     ) -> Optional["types.Message"]:
@@ -85,6 +86,11 @@ class EditEphemeralMessageText:
             rich_message (:obj:`~pyrogram.types.InputRichMessage`, *optional*):
                 Deprecated alias of *rich_text*.
 
+            link_preview_options (:obj:`~pyrogram.types.LinkPreviewOptions`, *optional*):
+                Options used for link preview generation for the message.
+                ``ephemeral.editMessage`` has no flag to turn a preview off, so
+                *is_disabled* has no effect here.
+
             reply_markup (:obj:`~pyrogram.types.InlineKeyboardMarkup`, *optional*):
                 An inline keyboard.
 
@@ -114,8 +120,8 @@ class EditEphemeralMessageText:
         if rich_text is not None:
             return await edit_ephemeral(
                 self, chat_id, receiver_id, message_id,
-                rich_message=utils.build_input_rich_message(
-                    rich_text, rich_text_parse_mode, rich_text_media
+                rich_message=await utils.build_input_rich_message(
+                    self, rich_text, rich_text_parse_mode, rich_text_media, chat_id
                 ),
                 reply_markup=reply_markup,
                 welcome=welcome,
@@ -129,6 +135,12 @@ class EditEphemeralMessageText:
             self, chat_id, receiver_id, message_id,
             message=message,
             entities=parsed_entities,
+            media=raw.types.InputMediaWebPage(
+                url=link_preview_options.url,
+                force_large_media=link_preview_options.prefer_large_media,
+                force_small_media=link_preview_options.prefer_small_media,
+                optional=True
+            ) if link_preview_options is not None and link_preview_options.url else None,
             reply_markup=reply_markup,
             welcome=welcome,
         )

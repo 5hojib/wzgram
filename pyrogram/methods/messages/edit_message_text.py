@@ -118,8 +118,8 @@ class EditMessageText:
         if rich_text is not None:
             text_params = {
                 "message": "",
-                "rich_message": utils.build_input_rich_message(
-                    rich_text, rich_text_parse_mode, rich_text_media
+                "rich_message": await utils.build_input_rich_message(
+                    self, rich_text, rich_text_parse_mode, rich_text_media, chat_id
                 )
             }
         else:

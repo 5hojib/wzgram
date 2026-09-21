@@ -147,8 +147,8 @@ class SendRichMessage:
                 # Send a rich formatted message
                 await app.send_rich_message(chat_id, "**Hello** __world__!")
         """
-        rich_message = utils.build_input_rich_message(
-            rich_text, parse_mode or self.parse_mode, media
+        rich_message = await utils.build_input_rich_message(
+            self, rich_text, parse_mode or self.parse_mode, media, chat_id
         )
 
         r = await self.invoke(

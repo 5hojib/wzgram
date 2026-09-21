@@ -195,17 +195,21 @@ async def test_the_deprecated_name_still_reaches_the_wire(monkeypatch):
     assert seen["rich_message"].markdown == "# hi"
 
 
-def test_build_input_rich_message_picks_the_constructor_by_parse_mode():
+@pytest.mark.asyncio
+async def test_build_input_rich_message_picks_the_constructor_by_parse_mode():
     from pyrogram import utils
 
+    client = FakeClient()
+
     assert isinstance(
-        utils.build_input_rich_message("# hi"), raw.types.InputRichMessageMarkdown
+        await utils.build_input_rich_message(client, "# hi"),
+        raw.types.InputRichMessageMarkdown,
     )
     assert isinstance(
-        utils.build_input_rich_message("<h1>hi</h1>", enums.ParseMode.HTML),
+        await utils.build_input_rich_message(client, "<h1>hi</h1>", enums.ParseMode.HTML),
         raw.types.InputRichMessageHTML,
     )
     assert isinstance(
-        utils.build_input_rich_message(types.InputRichMessage(html="<p>x</p>")),
+        await utils.build_input_rich_message(client, types.InputRichMessage(html="<p>x</p>")),
         raw.types.InputRichMessageHTML,
     )
