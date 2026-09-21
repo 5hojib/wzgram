@@ -196,6 +196,7 @@ class CallbackQuery(Object, Update):
         self,
         text: str,
         parse_mode: Optional["enums.ParseMode"] = None,
+        link_preview_options: Optional["types.LinkPreviewOptions"] = None,
         disable_web_page_preview: Optional[bool] = None,
         reply_markup: Optional["types.InlineKeyboardMarkup"] = None
     ) -> Union["types.Message", bool]:
@@ -210,6 +211,9 @@ class CallbackQuery(Object, Update):
             parse_mode (:obj:`~pyrogram.enums.ParseMode`, *optional*):
                 By default, texts are parsed using both Markdown and HTML styles.
                 You can combine both syntaxes together.
+
+            link_preview_options (:obj:`~pyrogram.types.LinkPreviewOptions`, *optional*):
+                Link preview generation options for the message.
 
             disable_web_page_preview (``bool``, *optional*):
                 Disables link previews for links in this message.
@@ -230,6 +234,7 @@ class CallbackQuery(Object, Update):
                 message_id=self.message.id,
                 text=text,
                 parse_mode=parse_mode,
+                link_preview_options=link_preview_options,
                 disable_web_page_preview=disable_web_page_preview,
                 reply_markup=reply_markup
             )
@@ -238,6 +243,7 @@ class CallbackQuery(Object, Update):
                 inline_message_id=self.inline_message_id,
                 text=text,
                 parse_mode=parse_mode,
+                link_preview_options=link_preview_options,
                 disable_web_page_preview=disable_web_page_preview,
                 reply_markup=reply_markup
             )

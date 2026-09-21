@@ -51,6 +51,8 @@ SHORTCUT_CALLS = {
     ("messages_and_media.message", "reply_dice"): "send_dice",
     ("messages_and_media.message", "answer_dice"): "send_dice",
     ("messages_and_media.message", "reply_text"): "send_message",
+    ("messages_and_media.message", "reply_rich"): "send_rich_message",
+    ("messages_and_media.message", "answer_rich"): "send_rich_message",
     ("messages_and_media.message", "reply_contact"): "send_contact",
     ("messages_and_media.message", "answer_contact"): "send_contact",
     ("messages_and_media.message", "reply_location"): "send_location",
