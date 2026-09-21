@@ -188,7 +188,7 @@ class InputRichBlockDivider(InputRichBlock):
 
 
 class InputRichBlockMathematicalExpression(InputRichBlock):
-    """A mathematical expression block, corresponding to the HTML tag ``<math>``.
+    """A mathematical expression block, corresponding to the custom HTML tag ``<tg-math-block>``.
 
     Parameters:
         expression (``str``):
@@ -362,7 +362,7 @@ class InputRichBlockBlockQuotation(InputRichBlock):
 
 class InputRichBlockExpandableBlockQuotation(InputRichBlock):
     """A block quotation, corresponding to the HTML tag ``<blockquote>`` with the
-    custom attribute ``collapsed``.
+    custom attribute ``expandable``.
 
     Parameters:
         text (``str`` | :obj:`~pyrogram.raw.base.RichText`):
@@ -452,7 +452,7 @@ class InputRichBlockDocument(InputRichBlock):
 
 
 class InputRichBlockPullQuotation(InputRichBlock):
-    """A pull quotation block, corresponding to the HTML tag ``<pullquote>``.
+    """A pull quotation block, corresponding to the HTML tag ``<aside>``.
 
     Parameters:
         text (``str`` | :obj:`~pyrogram.raw.base.RichText`):
@@ -481,7 +481,7 @@ class InputRichBlockPullQuotation(InputRichBlock):
 
 
 class InputRichBlockCollage(InputRichBlock):
-    """A collage block, corresponding to the HTML tag ``<collage>``.
+    """A collage block, corresponding to the custom HTML tag ``<tg-collage>``.
 
     Displays a set of media blocks in a grid layout.
 
@@ -512,7 +512,7 @@ class InputRichBlockCollage(InputRichBlock):
 
 
 class InputRichBlockSlideshow(InputRichBlock):
-    """A slideshow block, corresponding to the HTML tag ``<slideshow>``.
+    """A slideshow block, corresponding to the custom HTML tag ``<tg-slideshow>``.
 
     Displays a set of media blocks in a slideshow/carousel layout.
 
@@ -695,7 +695,7 @@ class InputRichBlockDetails(InputRichBlock):
 
 
 class InputRichBlockMap(InputRichBlock):
-    """A map block, corresponding to the HTML tag ``<map>``.
+    """A map block, corresponding to the custom HTML tag ``<tg-map>``.
 
     Embeds a geographic map with a pin at the specified location.
 
@@ -811,7 +811,7 @@ class InputRichBlockAudio(InputRichBlock):
 
 
 class InputRichBlockPhoto(InputRichBlock):
-    """A photo block, corresponding to the HTML tag ``<photo>``.
+    """A photo block, corresponding to the HTML tag ``<img>``.
 
     Displays a photo in the message.
 
