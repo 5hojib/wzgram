@@ -79,7 +79,9 @@ def test_block_vectors_merge_across_a_media_list():
 
 
 def _rich_message_constructions():
-    for path in sorted((PYROGRAM / "methods").rglob("*.py")):
+    paths = sorted((PYROGRAM / "methods").rglob("*.py")) + [PYROGRAM / "utils.py"]
+
+    for path in paths:
         tree = ast.parse(path.read_text(encoding="utf-8"))
 
         for node in ast.walk(tree):

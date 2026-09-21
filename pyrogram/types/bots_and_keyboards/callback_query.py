@@ -194,10 +194,13 @@ class CallbackQuery(Object, Update):
 
     async def edit_message_text(
         self,
-        text: str,
+        text: Optional[str] = None,
         parse_mode: Optional["enums.ParseMode"] = None,
         link_preview_options: Optional["types.LinkPreviewOptions"] = None,
         disable_web_page_preview: Optional[bool] = None,
+        rich_text: Optional[Union[str, "types.InputRichMessage"]] = None,
+        rich_text_parse_mode: "enums.ParseMode" = enums.ParseMode.MARKDOWN,
+        rich_text_media: Optional[List["types.InputRichMessageMedia"]] = None,
         reply_markup: Optional["types.InlineKeyboardMarkup"] = None
     ) -> Union["types.Message", bool]:
         """Edit the text of messages attached to callback queries.
@@ -218,6 +221,19 @@ class CallbackQuery(Object, Update):
             disable_web_page_preview (``bool``, *optional*):
                 Disables link previews for links in this message.
 
+            rich_text (``str`` | :obj:`~pyrogram.types.InputRichMessage`, *optional*):
+                Rich content to send, as Markdown or HTML text or as a whole
+                :obj:`~pyrogram.types.InputRichMessage`.
+
+            rich_text_parse_mode (:obj:`~pyrogram.enums.ParseMode`, *optional*):
+                Parse mode for *rich_text*. Defaults to Markdown.
+                Ignored when *rich_text* is an :obj:`~pyrogram.types.InputRichMessage`.
+
+            rich_text_media (List of :obj:`~pyrogram.types.InputRichMessageMedia`, *optional*):
+                Media *rich_text* refers to through ``tg://photo?id=``, ``tg://video?id=``
+                or ``tg://audio?id=`` links.
+                Ignored when *rich_text* is an :obj:`~pyrogram.types.InputRichMessage`.
+
             reply_markup (:obj:`~pyrogram.types.InlineKeyboardMarkup`, *optional*):
                 An InlineKeyboardMarkup object.
 
@@ -236,6 +252,9 @@ class CallbackQuery(Object, Update):
                 parse_mode=parse_mode,
                 link_preview_options=link_preview_options,
                 disable_web_page_preview=disable_web_page_preview,
+                rich_text=rich_text,
+                rich_text_parse_mode=rich_text_parse_mode,
+                rich_text_media=rich_text_media,
                 reply_markup=reply_markup
             )
         else:
@@ -245,6 +264,9 @@ class CallbackQuery(Object, Update):
                 parse_mode=parse_mode,
                 link_preview_options=link_preview_options,
                 disable_web_page_preview=disable_web_page_preview,
+                rich_text=rich_text,
+                rich_text_parse_mode=rich_text_parse_mode,
+                rich_text_media=rich_text_media,
                 reply_markup=reply_markup
             )
 

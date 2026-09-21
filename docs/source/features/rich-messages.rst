@@ -238,11 +238,26 @@ that sends a long rich message cannot read the rest of its own back.
 Rich text elsewhere
 -------------------
 
-``rich_text`` is not confined to :meth:`~pyrogram.Client.send_rich_message`.
-:meth:`~pyrogram.Client.send_message`, :meth:`~pyrogram.Client.edit_message_text` and
-:meth:`~pyrogram.Client.send_ephemeral_message` take a ``rich_text`` of their own, with
-``rich_text_media`` for its media and ``rich_text_parse_mode`` (Markdown by default) for
-when you pass a plain string rather than an :obj:`~pyrogram.types.InputRichMessage`:
+``rich_text`` is not confined to :meth:`~pyrogram.Client.send_rich_message`. Every method
+that can carry rich content takes the same three arguments: ``rich_text``, which is a
+Markdown or HTML string or a whole :obj:`~pyrogram.types.InputRichMessage`,
+``rich_text_parse_mode`` (Markdown by default) for when it is a string, and
+``rich_text_media`` for the media it refers to. That is
+:meth:`~pyrogram.Client.send_message`, :meth:`~pyrogram.Client.edit_message_text`,
+:meth:`~pyrogram.Client.edit_message_caption`, :meth:`~pyrogram.Client.edit_inline_text`,
+:meth:`~pyrogram.Client.send_ephemeral_message`,
+:meth:`~pyrogram.Client.edit_ephemeral_message_text`,
+:meth:`~pyrogram.Client.send_rich_message_draft`, and the bound
+:meth:`~pyrogram.types.Message.edit_text`,
+:meth:`~pyrogram.types.Message.edit_ephemeral_text` and
+:meth:`~pyrogram.types.CallbackQuery.edit_message_text`. The rich-first methods —
+:meth:`~pyrogram.Client.send_rich_message`, :meth:`~pyrogram.types.Message.reply_rich`
+and :meth:`~pyrogram.types.Message.answer_rich` — spell the last two ``parse_mode`` and
+``media``, since they have no text of their own to disambiguate from.
+
+``rich_message`` still works on the two methods that used to take it, with a deprecation
+warning; ``message.rich_message`` remains the name of the rich content on a *received*
+message.
 
 .. code-block:: python
 

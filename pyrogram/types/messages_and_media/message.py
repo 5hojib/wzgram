@@ -9073,6 +9073,9 @@ class Message(Object, Update):
         text: Optional[str] = None,
         parse_mode: Optional["enums.ParseMode"] = None,
         entities: Optional[List["types.MessageEntity"]] = None,
+        rich_text: Optional[Union[str, "types.InputRichMessage"]] = None,
+        rich_text_parse_mode: "enums.ParseMode" = enums.ParseMode.MARKDOWN,
+        rich_text_media: Optional[List["types.InputRichMessageMedia"]] = None,
         rich_message: Optional["types.InputRichMessage"] = None,
         reply_markup: Optional["types.InlineKeyboardMarkup"] = None,
         welcome: Optional[bool] = None,
@@ -9090,7 +9093,7 @@ class Message(Object, Update):
 
         Parameters:
             text (``str``, *optional*):
-                New text of the message. Required if *rich_message* is not given.
+                New text of the message. Required if *rich_text* is not given.
 
             parse_mode (:obj:`~pyrogram.enums.ParseMode`, *optional*):
                 By default, texts are parsed using both Markdown and HTML styles.
@@ -9099,8 +9102,21 @@ class Message(Object, Update):
             entities (List of :obj:`~pyrogram.types.MessageEntity`, *optional*):
                 List of special entities that appear in message text, which can be specified instead of *parse_mode*.
 
+            rich_text (``str`` | :obj:`~pyrogram.types.InputRichMessage`, *optional*):
+                Rich content to send, as Markdown or HTML text or as a whole
+                :obj:`~pyrogram.types.InputRichMessage`.
+
+            rich_text_parse_mode (:obj:`~pyrogram.enums.ParseMode`, *optional*):
+                Parse mode for *rich_text*. Defaults to Markdown.
+                Ignored when *rich_text* is an :obj:`~pyrogram.types.InputRichMessage`.
+
+            rich_text_media (List of :obj:`~pyrogram.types.InputRichMessageMedia`, *optional*):
+                Media *rich_text* refers to through ``tg://photo?id=``, ``tg://video?id=``
+                or ``tg://audio?id=`` links.
+                Ignored when *rich_text* is an :obj:`~pyrogram.types.InputRichMessage`.
+
             rich_message (:obj:`~pyrogram.types.InputRichMessage`, *optional*):
-                New rich content of the message. Overrides *text*.
+                Deprecated alias of *rich_text*.
 
             reply_markup (:obj:`~pyrogram.types.InlineKeyboardMarkup`, *optional*):
                 An InlineKeyboardMarkup object.
@@ -9122,6 +9138,9 @@ class Message(Object, Update):
             text=text,
             parse_mode=parse_mode,
             entities=entities,
+            rich_text=rich_text,
+            rich_text_parse_mode=rich_text_parse_mode,
+            rich_text_media=rich_text_media,
             rich_message=rich_message,
             reply_markup=reply_markup,
             welcome=welcome,
@@ -9417,10 +9436,13 @@ class Message(Object, Update):
 
     async def edit_text(
         self,
-        text: str,
+        text: Optional[str] = None,
         parse_mode: Optional["enums.ParseMode"] = None,
         entities: Optional[List["types.MessageEntity"]] = None,
         link_preview_options: Optional["types.LinkPreviewOptions"] = None,
+        rich_text: Optional[Union[str, "types.InputRichMessage"]] = None,
+        rich_text_parse_mode: "enums.ParseMode" = enums.ParseMode.MARKDOWN,
+        rich_text_media: Optional[List["types.InputRichMessageMedia"]] = None,
         reply_markup: Optional["types.InlineKeyboardMarkup"] = None,
 
         show_caption_above_media: Optional[bool] = None,
@@ -9451,6 +9473,19 @@ class Message(Object, Update):
             link_preview_options (:obj:`~pyrogram.types.LinkPreviewOptions`, *optional*):
                 Options used for link preview generation for the message.
 
+            rich_text (``str`` | :obj:`~pyrogram.types.InputRichMessage`, *optional*):
+                Rich content to send, as Markdown or HTML text or as a whole
+                :obj:`~pyrogram.types.InputRichMessage`.
+
+            rich_text_parse_mode (:obj:`~pyrogram.enums.ParseMode`, *optional*):
+                Parse mode for *rich_text*. Defaults to Markdown.
+                Ignored when *rich_text* is an :obj:`~pyrogram.types.InputRichMessage`.
+
+            rich_text_media (List of :obj:`~pyrogram.types.InputRichMessageMedia`, *optional*):
+                Media *rich_text* refers to through ``tg://photo?id=``, ``tg://video?id=``
+                or ``tg://audio?id=`` links.
+                Ignored when *rich_text* is an :obj:`~pyrogram.types.InputRichMessage`.
+
             reply_markup (:obj:`~pyrogram.types.InlineKeyboardMarkup`, *optional*):
                 An InlineKeyboardMarkup object.
 
@@ -9468,6 +9503,9 @@ class Message(Object, Update):
             entities=entities,
             link_preview_options=link_preview_options,
             business_connection_id=self.business_connection_id,
+            rich_text=rich_text,
+            rich_text_parse_mode=rich_text_parse_mode,
+            rich_text_media=rich_text_media,
             reply_markup=reply_markup,
 
             show_caption_above_media=show_caption_above_media,

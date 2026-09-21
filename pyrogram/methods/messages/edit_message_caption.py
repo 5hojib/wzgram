@@ -30,8 +30,9 @@ class EditMessageCaption:
         caption: str,
         parse_mode: Optional["enums.ParseMode"] = None,
         caption_entities: Optional[List["types.MessageEntity"]] = None,
-        rich_text: Optional[str] = None,
+        rich_text: Optional[Union[str, "types.InputRichMessage"]] = None,
         rich_text_parse_mode: "enums.ParseMode" = enums.ParseMode.MARKDOWN,
+        rich_text_media: Optional[List["types.InputRichMessageMedia"]] = None,
         reply_markup: Optional["types.InlineKeyboardMarkup"] = None,
         link_preview_options: Optional["types.LinkPreviewOptions"] = None,
         show_caption_above_media: Optional[bool] = None,
@@ -61,12 +62,19 @@ class EditMessageCaption:
             caption_entities (List of :obj:`~pyrogram.types.MessageEntity`, *optional*):
                 List of special entities that appear in the caption, which can be specified instead of *parse_mode*.
 
-            rich_text (``str``, *optional*):
-                Rich text content with GitHub Flavored Markdown or HTML formatting (server-side rendered).
+            rich_text (``str`` | :obj:`~pyrogram.types.InputRichMessage`, *optional*):
+                Rich content to send, as Markdown or HTML text or as a whole
+                :obj:`~pyrogram.types.InputRichMessage`.
                 When provided, *caption*/*parse_mode*/*caption_entities* are ignored.
 
             rich_text_parse_mode (:obj:`~pyrogram.enums.ParseMode`, *optional*):
-                Parse mode for *rich_text*: :obj:`~pyrogram.enums.ParseMode.MARKDOWN` (default, supports GFM) or :obj:`~pyrogram.enums.ParseMode.HTML`.
+                Parse mode for *rich_text*. Defaults to Markdown.
+                Ignored when *rich_text* is an :obj:`~pyrogram.types.InputRichMessage`.
+
+            rich_text_media (List of :obj:`~pyrogram.types.InputRichMessageMedia`, *optional*):
+                Media *rich_text* refers to through ``tg://photo?id=``, ``tg://video?id=``
+                or ``tg://audio?id=`` links.
+                Ignored when *rich_text* is an :obj:`~pyrogram.types.InputRichMessage`.
 
             reply_markup (:obj:`~pyrogram.types.InlineKeyboardMarkup`, *optional*):
                 An InlineKeyboardMarkup object.
@@ -99,6 +107,7 @@ class EditMessageCaption:
             entities=caption_entities,
             rich_text=rich_text,
             rich_text_parse_mode=rich_text_parse_mode,
+            rich_text_media=rich_text_media,
             reply_markup=reply_markup,
             link_preview_options=link_preview_options,
             show_caption_above_media=show_caption_above_media,

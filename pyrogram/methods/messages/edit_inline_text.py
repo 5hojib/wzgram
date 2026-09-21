@@ -131,19 +131,12 @@ class EditInlineText:
             invert_media = show_caption_above_media
 
         if rich_text is not None:
-            if isinstance(rich_text, types.InputRichMessage):
-                rich_msg = rich_text.write()
-            else:
-                files = types.InputRichMessage(
-                    html="_", media=rich_text_media
-                ).write_files() if rich_text_media else None
-
-                if rich_text_parse_mode == enums.ParseMode.HTML:
-                    rich_msg = raw.types.InputRichMessageHTML(html=rich_text, files=files)
-                else:
-                    rich_msg = raw.types.InputRichMessageMarkdown(markdown=rich_text, files=files)
-
-            text_params = {"message": "", "rich_message": rich_msg}
+            text_params = {
+                "message": "",
+                "rich_message": utils.build_input_rich_message(
+                    rich_text, rich_text_parse_mode, rich_text_media
+                )
+            }
         else:
             text_params = await utils.parse_text_entities(self, text, parse_mode, entities)
 
