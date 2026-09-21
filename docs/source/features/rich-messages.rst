@@ -8,7 +8,10 @@ with entities on top, a rich message has structure: headings, lists, tables, pul
 code blocks, collapsible sections, collages, maps and captions — the vocabulary of an
 Instant View article, composed and sent from your own code.
 
-Rich messages are sent by **bots**.
+Rich messages are sent by **bots**, and by **users with Premium** — a user account
+without it gets ``[400 RICH_MESSAGE_UNSUPPORTED]``. Streaming a draft with
+:meth:`~pyrogram.Client.send_rich_message_draft` stays a bot-only method
+(``[400 USER_BOT_REQUIRED]``).
 
 
 -----

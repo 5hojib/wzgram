@@ -44,7 +44,10 @@ class SendRichMessage:
     ) -> "types.Message":
         """Send a rich formatted message.
 
-        .. include:: /_includes/usable-by/bots.rst
+        A user account must have Premium; Telegram answers
+        ``[400 RICH_MESSAGE_UNSUPPORTED]`` otherwise.
+
+        .. include:: /_includes/usable-by/users-bots.rst
 
         Parameters:
             chat_id (``int`` | ``str``):
