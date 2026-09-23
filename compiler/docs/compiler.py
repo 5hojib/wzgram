@@ -492,6 +492,36 @@ def pyrogram_api():
             view_messages
             vote_poll
         """,
+        stickers="""
+        Stickers
+            add_favorite_sticker
+            add_recent_sticker
+            add_sticker_to_set
+            change_sticker_set
+            clear_recent_stickers
+            create_new_sticker_set
+            delete_sticker_from_set
+            delete_sticker_set
+            get_favorite_stickers
+            get_owned_sticker_sets
+            get_recent_stickers
+            get_sticker_set
+            get_suggested_sticker_set_name
+            remove_favorite_sticker
+            remove_recent_sticker
+            reorder_installed_sticker_sets
+            replace_sticker_in_set
+            search_sticker_sets
+            search_stickers
+            set_custom_emoji_sticker_set_thumbnail
+            set_sticker_emoji_list
+            set_sticker_keywords
+            set_sticker_mask_position
+            set_sticker_position_in_set
+            set_sticker_set_thumbnail
+            set_sticker_set_title
+            upload_sticker_file
+        """,
         password="""
         Password
             change_cloud_password
@@ -771,6 +801,8 @@ def pyrogram_api():
             Location
             Venue
             Sticker
+            StickerSet
+            File
             Game
             WebPage
             Poll
@@ -1066,6 +1098,7 @@ def pyrogram_api():
             InputMediaLivePhoto
             InputMediaLocation
             InputMediaSticker
+            InputSticker
             InputMediaVenue
             InputMessageContent
             InputPollMedia
@@ -1183,6 +1216,7 @@ def pyrogram_api():
             ReplyColor
             SentCodeType
             StickerType
+            StickerFormat
             StoriesPrivacyRules
             SuggestedPostRefundReason
             SuggestedPostState
