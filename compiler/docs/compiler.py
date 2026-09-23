@@ -256,6 +256,7 @@ def pyrogram_api():
             archive_chats
             ban_chat_member
             close_forum_topic
+            close_general_forum_topic
             create_channel
             create_forum_topic
             create_group
@@ -268,6 +269,7 @@ def pyrogram_api():
             delete_supergroup
             delete_user_history
             edit_forum_topic
+            edit_general_forum_topic
             get_chat
             get_chat_event_log
             get_chat_member
@@ -287,12 +289,15 @@ def pyrogram_api():
             get_similar_channels
             get_suitable_discussion_chats
             get_top_chats
+            hide_general_forum_topic
             join_chat
             leave_chat
             mark_chat_unread
             pin_chat_message
             pin_forum_topic
             promote_chat_member
+            reopen_forum_topic
+            reopen_general_forum_topic
             restrict_chat_member
             restrict_sponsored_messages
             set_administrator_title
@@ -323,7 +328,10 @@ def pyrogram_api():
             transfer_chat_ownership
             unarchive_chats
             unban_chat_member
+            unhide_general_forum_topic
             unpin_all_chat_messages
+            unpin_all_forum_topic_messages
+            unpin_all_general_forum_topic_messages
             unpin_chat_message
             unpin_forum_topic
             update_channel_color
