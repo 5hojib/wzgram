@@ -1914,3 +1914,20 @@ async def test_a_venue_with_half_an_identifier_pair_still_serializes(ids) -> Non
     ).write()
 
     media.write()
+
+
+@pytest.mark.asyncio
+async def test_giveaway_winners_parse_when_the_launch_message_is_gone():
+    from pyrogram.errors import MessageIdsEmpty
+
+    client = MagicMock()
+    client.get_messages = AsyncMock(side_effect=MessageIdsEmpty())
+    channel = raw.types.Channel(id=7, title="t", photo=raw.types.ChatPhotoEmpty(), date=0, usernames=[], restriction_reason=[])
+    media = raw.types.MessageMediaGiveawayResults(
+        channel_id=7, launch_msg_id=5, winners_count=1, unclaimed_count=0, winners=[], until_date=0
+    )
+
+    winners = await types.GiveawayWinners._parse(client, media, {}, {7: channel})
+
+    assert winners.giveaway_message_id == 5
+    assert winners.giveaway_message is None
