@@ -3146,7 +3146,7 @@ async def test_copying_a_media_group_keeps_the_source_formatting(monkeypatch):
     bold = [types.MessageEntity(type=enums.MessageEntityType.BOLD, offset=0, length=3)]
     source = SimpleNamespace(
         photo=SimpleNamespace(file_id="AgACAgfake"), audio=None, document=None, video=None,
-        caption="one_two", caption_entities=bold,
+        caption="one_two", caption_entities=bold, has_media_spoiler=None,
     )
     client.get_media_group = AsyncMock(return_value=[source])
 
