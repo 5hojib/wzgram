@@ -5426,3 +5426,44 @@ async def test_unbanning_in_a_basic_group_does_not_ask_a_channel_rpc():
 
     assert await _Client().unban_chat_member(-5, 1) is True
     assert sent == []
+
+
+def test_run_works_without_a_current_event_loop(monkeypatch):
+    import threading
+
+    from pyrogram.methods.utilities import run as run_module
+
+    calls = []
+
+    async def fake_idle():
+        calls.append("idle")
+
+    monkeypatch.setattr(run_module, "idle", fake_idle)
+
+    class _Client(pyrogram.Client):
+        async def start(self, *args, **kwargs):
+            calls.append("start")
+
+        async def stop(self, *args, **kwargs):
+            calls.append("stop")
+
+    async def main():
+        calls.append("main")
+
+    errors = []
+
+    def target():
+        try:
+            app = _Client("run", api_id=1, api_hash="a" * 32, in_memory=True)
+            app.run(main())
+            app.run()
+            app.loop.close()
+        except Exception as e:
+            errors.append(e)
+
+    thread = threading.Thread(target=target)
+    thread.start()
+    thread.join()
+
+    assert errors == []
+    assert calls == ["main", "start", "idle", "stop"]
